@@ -9,9 +9,22 @@ class Homepage extends StatefulWidget {
 }
 
 class _HomepageState extends State<Homepage> {
+  NotificationServices notificationServices = NotificationServices();
+
   @override
   void initState() {
-    NotificationServices().requestNotificationsPermission();
+    notificationServices.requestNotificationsPermission();
+
+    notificationServices.isTokenRefreshed();
+
+    notificationServices.getDeviceToken().then((token) {
+      print('Device token: $token');
+    }).onError((error, stackTrace) {
+      print("error getting device token: $error");
+    });
+
+    notificationServices.firebaseInit();
+
     super.initState();
   }
 
