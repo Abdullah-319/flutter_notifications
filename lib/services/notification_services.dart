@@ -1,4 +1,8 @@
+import 'dart:math';
+
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationServices {
@@ -18,12 +22,18 @@ class NotificationServices {
     );
 
     if (settings.authorizationStatus == AuthorizationStatus.authorized) {
-      print("Notifications permission granted");
+      if (kDebugMode) {
+        print("Notifications permission granted");
+      }
     } else if (settings.authorizationStatus ==
         AuthorizationStatus.provisional) {
-      print("Notifications permission provisionally granted");
+      if (kDebugMode) {
+        print("Notifications permission provisionally granted");
+      }
     } else {
-      print("Notifications permission denied");
+      if (kDebugMode) {
+        print("Notifications permission denied");
+      }
     }
   }
 
@@ -39,15 +49,80 @@ class NotificationServices {
 
   void isTokenRefreshed() {
     messaging.onTokenRefresh.listen((event) {
-      print('Token refreshed');
+      if (kDebugMode) {
+        print('Token refreshed');
+      }
       event.toString();
     });
   }
 
+  void initLocalNotifications(
+      BuildContext context, RemoteMessage message) async {
+    var androidInitializationSettings =
+        const AndroidInitializationSettings('@mipmap/ic_launcher');
+    var iosInitializationSettings = const DarwinInitializationSettings();
+
+    var initializationSettings = InitializationSettings(
+      android: androidInitializationSettings,
+      iOS: iosInitializationSettings,
+    );
+
+    await _flutterLocalNotificationsPlugin.initialize(
+      initializationSettings,
+      onDidReceiveNotificationResponse: (payload) {},
+    );
+  }
+
   void firebaseInit() {
     FirebaseMessaging.onMessage.listen((message) {
-      // print(message.notification!.title.toString());
-      // print(message.notification!.body.toString());
+      if (kDebugMode) {
+        print(message.notification!.body.toString());
+        print(message.notification!.title.toString());
+      }
+      showNotification(message);
     });
+  }
+
+  Future<void> showNotification(RemoteMessage message) async {
+    AndroidNotificationChannel androidNotificationChannel =
+        AndroidNotificationChannel(
+      Random.secure().nextInt(10000).toString(),
+      'High Importance Notification',
+      importance: Importance.max,
+    );
+
+    AndroidNotificationDetails androidNotificationDetails =
+        AndroidNotificationDetails(
+      androidNotificationChannel.id,
+      androidNotificationChannel.name,
+      channelDescription: 'channel description',
+      importance: Importance.high,
+      priority: Priority.high,
+      ticker: 'ticker',
+    );
+
+    DarwinNotificationDetails darwinNotificationDetails =
+        const DarwinNotificationDetails(
+      presentAlert: true,
+      presentSound: true,
+      presentBanner: true,
+    );
+
+    NotificationDetails notificationDetails = NotificationDetails(
+      android: androidNotificationDetails,
+      iOS: darwinNotificationDetails,
+    );
+
+    Future.delayed(
+      Duration.zero,
+      () {
+        _flutterLocalNotificationsPlugin.show(
+          0,
+          message.notification!.title.toString(),
+          message.notification!.body.toString(),
+          notificationDetails,
+        );
+      },
+    );
   }
 }
