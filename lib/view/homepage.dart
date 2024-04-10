@@ -23,7 +23,8 @@ class _HomepageState extends State<Homepage> {
       print("error getting device token: $error");
     });
 
-    notificationServices.firebaseInit();
+    
+    notificationServices.firebaseInit(context);
 
     super.initState();
   }

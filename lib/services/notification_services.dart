@@ -6,9 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 
 class NotificationServices {
-  FirebaseMessaging messaging = FirebaseMessaging.instance;
-  final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
-      FlutterLocalNotificationsPlugin();
+  final messaging = FirebaseMessaging.instance;
+  final _flutterLocalNotificationsPlugin = FlutterLocalNotificationsPlugin();
 
   void requestNotificationsPermission() async {
     NotificationSettings settings = await messaging.requestPermission(
@@ -59,7 +58,7 @@ class NotificationServices {
   void initLocalNotifications(
       BuildContext context, RemoteMessage message) async {
     var androidInitializationSettings =
-        const AndroidInitializationSettings('@drawable/ic_launcher');
+        const AndroidInitializationSettings('@mipmap/ic_launcher');
     var iosInitializationSettings = const DarwinInitializationSettings();
 
     var initializationSettings = InitializationSettings(
@@ -73,28 +72,28 @@ class NotificationServices {
     );
   }
 
-  void firebaseInit() {
+  void firebaseInit(BuildContext context) {
     FirebaseMessaging.onMessage.listen((message) {
       if (kDebugMode) {
         print(message.notification!.body.toString());
         print(message.notification!.title.toString());
       }
+      initLocalNotifications(context, message);
       showNotification(message);
     });
   }
 
   Future<void> showNotification(RemoteMessage message) async {
-    AndroidNotificationChannel androidNotificationChannel =
-        AndroidNotificationChannel(
+    final androidNotificationChannel = AndroidNotificationChannel(
       Random.secure().nextInt(100000).toString(),
       'High Importance Notification',
+      description: 'my channel',
       importance: Importance.max,
     );
 
-    AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails(
-      androidNotificationChannel.id.toString(),
-      androidNotificationChannel.name.toString(),
+    final androidNotificationDetails = AndroidNotificationDetails(
+      androidNotificationChannel.id,
+      androidNotificationChannel.name,
       channelDescription: 'channel description',
       importance: Importance.high,
       priority: Priority.high,
@@ -108,7 +107,7 @@ class NotificationServices {
       presentBanner: true,
     );
 
-    NotificationDetails notificationDetails = NotificationDetails(
+    final notificationDetails = NotificationDetails(
       android: androidNotificationDetails,
       iOS: darwinNotificationDetails,
     );
@@ -117,7 +116,7 @@ class NotificationServices {
       Duration.zero,
       () {
         _flutterLocalNotificationsPlugin.show(
-          0,
+          Random.secure().nextInt(100000),
           message.notification!.title.toString(),
           message.notification!.body.toString(),
           notificationDetails,
