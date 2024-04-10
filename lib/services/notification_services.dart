@@ -59,7 +59,7 @@ class NotificationServices {
   void initLocalNotifications(
       BuildContext context, RemoteMessage message) async {
     var androidInitializationSettings =
-        const AndroidInitializationSettings('@mipmap/ic_launcher');
+        const AndroidInitializationSettings('@drawable/ic_launcher');
     var iosInitializationSettings = const DarwinInitializationSettings();
 
     var initializationSettings = InitializationSettings(
@@ -86,15 +86,15 @@ class NotificationServices {
   Future<void> showNotification(RemoteMessage message) async {
     AndroidNotificationChannel androidNotificationChannel =
         AndroidNotificationChannel(
-      Random.secure().nextInt(10000).toString(),
+      Random.secure().nextInt(100000).toString(),
       'High Importance Notification',
       importance: Importance.max,
     );
 
     AndroidNotificationDetails androidNotificationDetails =
         AndroidNotificationDetails(
-      androidNotificationChannel.id,
-      androidNotificationChannel.name,
+      androidNotificationChannel.id.toString(),
+      androidNotificationChannel.name.toString(),
       channelDescription: 'channel description',
       importance: Importance.high,
       priority: Priority.high,
