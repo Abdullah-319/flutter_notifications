@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_notifications/services/notification_services.dart';
 
@@ -18,12 +19,15 @@ class _HomepageState extends State<Homepage> {
     notificationServices.isTokenRefreshed();
 
     notificationServices.getDeviceToken().then((token) {
-      print('Device token: $token');
+      if (kDebugMode) {
+        print('Device token: $token');
+      }
     }).onError((error, stackTrace) {
-      print("error getting device token: $error");
+      if (kDebugMode) {
+        print("error getting device token: $error");
+      }
     });
 
-    
     notificationServices.firebaseInit(context);
 
     super.initState();
@@ -35,6 +39,9 @@ class _HomepageState extends State<Homepage> {
       appBar: AppBar(
         title: const Text("Notifications"),
         centerTitle: true,
+      ),
+      body: const Center(
+        child: Text('Notifications'),
       ),
     );
   }

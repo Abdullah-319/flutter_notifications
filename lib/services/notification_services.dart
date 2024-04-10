@@ -55,6 +55,17 @@ class NotificationServices {
     });
   }
 
+  void firebaseInit(BuildContext context) {
+    FirebaseMessaging.onMessage.listen((message) {
+      if (kDebugMode) {
+        print(message.notification!.body.toString());
+        print(message.notification!.title.toString());
+      }
+      initLocalNotifications(context, message);
+      showNotification(message);
+    });
+  }
+
   void initLocalNotifications(
       BuildContext context, RemoteMessage message) async {
     var androidInitializationSettings =
@@ -70,17 +81,6 @@ class NotificationServices {
       initializationSettings,
       onDidReceiveNotificationResponse: (payload) {},
     );
-  }
-
-  void firebaseInit(BuildContext context) {
-    FirebaseMessaging.onMessage.listen((message) {
-      if (kDebugMode) {
-        print(message.notification!.body.toString());
-        print(message.notification!.title.toString());
-      }
-      initLocalNotifications(context, message);
-      showNotification(message);
-    });
   }
 
   Future<void> showNotification(RemoteMessage message) async {
