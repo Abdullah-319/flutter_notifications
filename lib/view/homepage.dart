@@ -30,6 +30,7 @@ class _HomepageState extends State<Homepage> {
     });
 
     notificationServices.firebaseInit(context);
+    notificationServices.setupInteractMessage(context);
 
     super.initState();
   }

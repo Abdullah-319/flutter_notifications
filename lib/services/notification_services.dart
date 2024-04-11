@@ -144,4 +144,19 @@ class NotificationServices {
               builder: (context) => MessageScreen(name: message.data['name'])));
     }
   }
+
+  Future<void> setupInteractMessage(BuildContext context) async {
+    // when app is terminated
+    RemoteMessage? initialMessage =
+        await FirebaseMessaging.instance.getInitialMessage();
+
+    if (initialMessage != null) {
+      handleMessage(context, initialMessage);
+    }
+
+    // when app is in the background
+    FirebaseMessaging.onMessageOpenedApp.listen((event) {
+      handleMessage(context, event);
+    });
+  }
 }
