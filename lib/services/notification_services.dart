@@ -1,9 +1,11 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter_notifications/view/message_screen.dart';
 
 class NotificationServices {
   final messaging = FirebaseMessaging.instance;
@@ -60,9 +62,16 @@ class NotificationServices {
       if (kDebugMode) {
         print(message.notification!.body.toString());
         print(message.notification!.title.toString());
+        print(message.data['id'].toString());
+        print(message.data['name'].toString());
       }
-      initLocalNotifications(context, message);
-      showNotification(message);
+
+      if (Platform.isAndroid) {
+        initLocalNotifications(context, message);
+        showNotification(message);
+      } else {
+        showNotification(message);
+      }
     });
   }
 
@@ -79,7 +88,9 @@ class NotificationServices {
 
     await _flutterLocalNotificationsPlugin.initialize(
       initializationSettings,
-      onDidReceiveNotificationResponse: (payload) {},
+      onDidReceiveNotificationResponse: (payload) {
+        handleMessage(context, message);
+      },
     );
   }
 
@@ -123,5 +134,14 @@ class NotificationServices {
         );
       },
     );
+  }
+
+  void handleMessage(BuildContext context, RemoteMessage message) {
+    if (message.data['type'] == 'msg') {
+      Navigator.push(
+          context,
+          MaterialPageRoute(
+              builder: (context) => MessageScreen(name: message.data['name'])));
+    }
   }
 }

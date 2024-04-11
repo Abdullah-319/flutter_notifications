@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_notifications/firebase_options.dart';
 import 'package:flutter_notifications/view/homepage.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +17,7 @@ void main() async {
   runApp(const MyApp());
 }
 
-@pragma('vm:entry-point') 
+@pragma('vm:entry-point')
 Future<void> _firebaseMessagingBackgroudHandler(RemoteMessage message) async {
   await Firebase.initializeApp();
   if (kDebugMode) {
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
+        fontFamily: GoogleFonts.poppins().fontFamily,
       ),
       home: const Homepage(),
     );
