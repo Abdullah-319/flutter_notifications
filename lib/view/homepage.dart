@@ -1,5 +1,8 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 
 import 'package:flutter_notifications/services/notification_services.dart';
 
@@ -42,8 +45,32 @@ class _HomepageState extends State<Homepage> {
         title: const Text("Notifications"),
         centerTitle: true,
       ),
-      body: const Center(
-        child: Text('Notifications'),
+      body: Center(
+        child: TextButton(
+          onPressed: () {
+            notificationServices.getDeviceToken().then((value) async {
+              var data = {
+                'to': value.toString(),
+                'priority': 'high',
+                'notification': {
+                  'title': 'Salam',
+                  'body': 'to everybody',
+                }
+              };
+
+              await http.post(
+                Uri.parse('https://fcm.googleapis.com/fcm/send'),
+                body: jsonEncode(data),
+                headers: {
+                  'Content-Type': 'application/json; charset=UTF-8',
+                  'Authorization':
+                      'key=AAAAQg0Q0ec:APA91bGA2A0Jx3YQSWbuyxoLCX6ymSNH4Cc3vKg__UNwmD6XyDftkByuaOBiumeUMrNafw2YYxNeUBYFZfsCo4h1hDoTibsEU2wYPIIQ1i5zZS8ufemZXfWCGvgqya4PIl0Lae30Adn3',
+                },
+              );
+            });
+          },
+          child: const Text('Send Notification'),
+        ),
       ),
     );
   }

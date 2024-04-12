@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'dart:math';
 
@@ -49,11 +51,11 @@ class NotificationServices {
   }
 
   void isTokenRefreshed() {
-    messaging.onTokenRefresh.listen((event) {
+    messaging.onTokenRefresh.listen((newToken) {
       if (kDebugMode) {
         print('Token refreshed');
       }
-      event.toString();
+      newToken.toString();
     });
   }
 
