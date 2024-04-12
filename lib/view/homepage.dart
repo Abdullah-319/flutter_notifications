@@ -50,12 +50,17 @@ class _HomepageState extends State<Homepage> {
           onPressed: () {
             notificationServices.getDeviceToken().then((value) async {
               var data = {
-                'to': value.toString(),
+                'to': value
+                    .toString(), // dtkL99S3QGSw82MubzgNVw:APA91bHGZwlXT7VEbJOM99BtjBqSXmp2717mCeEJwAhNm1J3EAk5VF7uxgRXRnsZ2myU38x1KRzLQhtGAbPbD1I37wk8n4kCtzwcf6_DOlM83IkfrP6A_QbLZQVdof_6uY8fv07oKmSD
                 'priority': 'high',
                 'notification': {
                   'title': 'Salam',
                   'body': 'to everybody',
-                }
+                },
+                'data': {
+                  'type': 'msg',
+                  'name': 'COMSATS',
+                },
               };
 
               await http.post(
