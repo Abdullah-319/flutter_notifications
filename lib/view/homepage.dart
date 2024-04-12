@@ -74,7 +74,7 @@ class _HomepageState extends State<Homepage> {
               );
             });
           },
-          child: const Text('Send Notification'),
+          child: const Text('Send self notification using api'),
         ),
       ),
     );
